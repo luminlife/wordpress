@@ -2,7 +2,7 @@
 
 The Lumin Events plugin for WordPress gives you access to the Lumin events web widget to display upcoming events for your venue.
 
-Current version: `1.0.3`
+Current version: `1.0.4`
 
 ## Features
 

@@ -16,7 +16,7 @@
  * Plugin Name:       Lumin.Life Events
  * Plugin URI:        https://github.com/luminlife/wordpress
  * Description:       Shortcodes to include Lumin.life web widgets
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            Lumin Arts Inc.
  * Author URI:        http://lumin.life
  * License:           GPL-2.0+
@@ -32,9 +32,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 define("SHORTCODE_NAME", 'lumin_events');
 define("LUMINEVENTS_URL",
-  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/event.widget.min.js?build=672");
+  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/event.widget.min.js?build=964");
 define("LUMINEVENTS_STYLE_URL",
-  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/css/lumin_widget_styles.min.css?build=672");
+  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/css/lumin_widget_styles.min.css?build=964");
 
 if (!function_exists('write_log')) {
   function write_log($log) {
