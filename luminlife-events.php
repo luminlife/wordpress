@@ -8,17 +8,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://lumin.life
+ * @link              https://www.stagehand.app
  * @since             1.0.0
  * @package           Luminlife_Events
  *
  * @wordpress-plugin
- * Plugin Name:       Lumin.Life Events
+ * Plugin Name:       Stagehand Events
  * Plugin URI:        https://github.com/luminlife/wordpress
- * Description:       Shortcodes to include Lumin.life web widgets
- * Version:           1.0.4
+ * Description:       Shortcodes to include Stagehand web widgets
+ * Version:           1.0.5
  * Author:            Lumin Arts Inc.
- * Author URI:        http://lumin.life
+ * Author URI:        https://www.stagehand.app
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       luminlife-events
@@ -32,9 +32,9 @@ if ( ! defined( 'WPINC' ) ) {
 
 define("SHORTCODE_NAME", 'lumin_events');
 define("LUMINEVENTS_URL",
-  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/event.widget.min.js?build=964");
+  "https://www.stagehand.app/widgets/v2/event.widget.min.js");
 define("LUMINEVENTS_STYLE_URL",
-  "https://s3-us-west-2.amazonaws.com/cdn.lumin.life/widgets/v2/css/lumin_widget_styles.min.css?build=964");
+  "https://www.stagehand.app/widgets/v2/css/lumin_widget_styles.min.css");
 
 if (!function_exists('write_log')) {
   function write_log($log) {
@@ -120,7 +120,8 @@ function lumin_events_shortcode($attributes) {
     'venue_id'=> NULL,
     'limit' => NULL,
     'show_date_badge' => NULL,
-    'disable_description' => NULL
+    'disable_description' => NULL,
+    'target' => NULL,
   ), $attributes));
 
   $divId = 'luminlife-events';
@@ -146,6 +147,9 @@ function lumin_events_shortcode($attributes) {
   }
   if (isset($disable_description)) {
     $optionsStr .= "disableEventDescription: ${disable_description},";
+  }
+  if (isset($target)) {
+    $optionsStr .= "target: ${target},";
   }
   $optionsStr .= "}";
 
