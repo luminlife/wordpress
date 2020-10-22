@@ -16,7 +16,7 @@
  * Plugin Name:       Stagehand Events
  * Plugin URI:        https://github.com/luminlife/wordpress
  * Description:       Shortcodes to include Stagehand web widgets
- * Version:           1.0.7
+ * Version:           1.0.8
  * Author:            Lumin Arts Inc.
  * Author URI:        https://www.stagehand.app
  * License:           GPL-2.0+
@@ -120,6 +120,7 @@ function lumin_events_shortcode($attributes) {
     'venue_id'=> NULL,
     'limit' => NULL,
     'show_date_badge' => NULL,
+    'show_photo' => NULL,
     'disable_description' => NULL,
     'target' => NULL,
     'link_to' => NULL,
@@ -145,6 +146,9 @@ function lumin_events_shortcode($attributes) {
   }
   if (isset($show_date_badge)) {
     $optionsStr .= "showCalendarDateBadge: ${show_date_badge},";
+  }
+  if (isset($show_photo)) {
+    $optionsStr .= "showPhoto: ${show_photo},";
   }
   if (isset($disable_description)) {
     $optionsStr .= "disableEventDescription: ${disable_description},";
