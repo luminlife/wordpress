@@ -35,6 +35,8 @@ define("LUMINEVENTS_URL",
   "https://www.stagehand.app/widgets/v2/event.widget.min.js");
 define("LUMINEVENTS_STYLE_URL",
   "https://www.stagehand.app/widgets/v2/css/lumin_widget_styles.min.css");
+define("CALENDAR_STYLE_URL",
+  "https://www.stagehand.app/widgets/v2/css/calendar.css");
 
 if (!function_exists('write_log')) {
   function write_log($log) {
@@ -120,7 +122,9 @@ function lumin_events_shortcode($attributes) {
     'venue_id'=> NULL,
     'limit' => NULL,
     'show_date_badge' => NULL,
+    'show_calendar_view' => NULL,
     'show_photo' => NULL,
+    'background_color' => NULL,
     'disable_description' => NULL,
     'target' => NULL,
     'link_to' => NULL,
@@ -159,7 +163,31 @@ function lumin_events_shortcode($attributes) {
   if (isset($link_to)) {
     $optionsStr .= "linkTo: '${link_to}',";
   }
+  if (isset($origin_url)) {
+    $optionsStr .= "originUrl: '${origin_url}',";
+  }
+  if (isset($show_calendar_view)) {
+    $optionsStr .= "showCalendarView: ${show_calendar_view},";
+
+    if ($show_calendar_view) {
+      wp_enqueue_style('luminlife-calendar_style',
+        esc_url_raw(CALENDAR_STYLE_URL), '', null);
+    }
+  }
+  if (isset($background_color)) {
+    $optionsStr .= "backgroundColor: '${background_color}',";
+  }
+
   $optionsStr .= "}";
+
+  if (is_page()) {
+    global $post;
+
+    if (has_shortcode($post->post_content, SHORTCODE_NAME)) {
+      wp_enqueue_style('luminlife-events_style',
+        esc_url_raw(LUMINEVENTS_STYLE_URL), '', null);
+    }
+  }
 
   wp_enqueue_script('luminlife-events_scripts');
 
@@ -191,21 +219,6 @@ function register_scripts() {
     esc_url_raw(LUMINEVENTS_URL),
     '',
     null);
-
-  if (is_page()) {
-    global $post;
-
-    /*
-     * Look for the shortcode on the page. If we have one,
-     * we enqueue our widget stylesheet.
-     */
-    if (has_shortcode($post->post_content, SHORTCODE_NAME)) {
-      wp_enqueue_style('luminlife-events_style',
-        esc_url_raw(LUMINEVENTS_STYLE_URL),
-        '',
-        null);
-    }
-  }
 }
 
 add_action('wp_enqueue_scripts', 'register_scripts');
