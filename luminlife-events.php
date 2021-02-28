@@ -16,7 +16,7 @@
  * Plugin Name:       Stagehand Events
  * Plugin URI:        https://github.com/luminlife/wordpress
  * Description:       Shortcodes to include Stagehand web widgets
- * Version:           1.0.8
+ * Version:           1.0.9
  * Author:            Lumin Arts Inc.
  * Author URI:        https://www.stagehand.app
  * License:           GPL-2.0+
