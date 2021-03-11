@@ -16,7 +16,7 @@
  * Plugin Name:       Stagehand Events
  * Plugin URI:        https://github.com/luminlife/wordpress
  * Description:       Shortcodes to include Stagehand web widgets
- * Version:           1.0.8
+ * Version:           1.0.9
  * Author:            Lumin Arts Inc.
  * Author URI:        https://www.stagehand.app
  * License:           GPL-2.0+
@@ -35,6 +35,12 @@ define("LUMINEVENTS_URL",
   "https://www.stagehand.app/widgets/v2/event.widget.min.js");
 define("LUMINEVENTS_STYLE_URL",
   "https://www.stagehand.app/widgets/v2/css/lumin_widget_styles.min.css");
+
+define("CALENDAR_SHORTCODE_NAME", 'stagehand_event_calendar');
+define("STAGEHANDCALENDAR_URL",
+  "https://www.stagehand.app/widgets/v2/venue-event-calendar.widget.min.js");
+define("STAGEHANDCALENDAR_STYLE_URL",
+  "https://www.stagehand.app/widgets/v2/css/venue-event-calendar.css");
 
 if (!function_exists('write_log')) {
   function write_log($log) {
@@ -124,6 +130,7 @@ function lumin_events_shortcode($attributes) {
     'disable_description' => NULL,
     'target' => NULL,
     'link_to' => NULL,
+    'origin_url' => NULL,
   ), $attributes));
 
   $divId = 'luminlife-events';
@@ -159,7 +166,20 @@ function lumin_events_shortcode($attributes) {
   if (isset($link_to)) {
     $optionsStr .= "linkTo: '${link_to}',";
   }
+  if (isset($origin_url)) {
+    $optionsStr .= "originUrl: '${origin_url}',";
+  }
+
   $optionsStr .= "}";
+
+  if (is_page()) {
+    global $post;
+
+    if (has_shortcode($post->post_content, SHORTCODE_NAME)) {
+      wp_enqueue_style('luminlife-events_style',
+        esc_url_raw(LUMINEVENTS_STYLE_URL), '', null);
+    }
+  }
 
   wp_enqueue_script('luminlife-events_scripts');
 
@@ -177,8 +197,88 @@ function lumin_events_shortcode($attributes) {
   return $return_string;
 }
 
+function stagehand_event_calendar_shortcode($attributes) {
+  /*
+   * We only do shortcodes on a page
+   */
+  if (!is_page()) {
+    return "<p>'".CALENDAR_SHORTCODE_NAME."' shortcode is only usable on a page</p>";
+  }
+
+  /*
+   * Get any attributes for the shortcode
+   */
+  extract(shortcode_atts(array(
+    'elem_id' => NULL,
+    'venue_id'=> NULL,
+    'limit' => NULL,
+    'show_photo' => NULL,
+    'background_color' => NULL,
+    'target' => NULL,
+    'origin_url' => NULL,
+  ), $attributes));
+
+  $divId = 'stagehand-calendar';
+  /*
+   * User can give a unique identifier if there are using multiple per page
+   */
+  if (isset($elem_id)) {
+    $divId .= "-{$elem_id}";
+  }
+
+  /*
+   * Set up the options for the event widget
+   */
+  $optionsStr = "{";
+  if (isset($venue_id)) {
+    $optionsStr .= "venueId: [${venue_id}],";
+  }
+  if (isset($limit)) {
+    $optionsStr .= "limit: ${limit},";
+  }
+  if (isset($show_photo)) {
+    $optionsStr .= "showPhoto: ${show_photo},";
+  }
+  if (isset($target)) {
+    $optionsStr .= "target: '${target}',";
+  }
+  if (isset($background_color)) {
+    $optionsStr .= "backgroundColor: '${background_color}',";
+  }
+  if (isset($origin_url)) {
+    $optionsStr .= "originUrl: '${origin_url}',";
+  }
+
+  $optionsStr .= "}";
+
+  if (is_page()) {
+    global $post;
+
+    if (has_shortcode($post->post_content, CALENDAR_SHORTCODE_NAME)) {
+      wp_enqueue_style('stagehand-event-calendar_style',
+        esc_url_raw(STAGEHANDCALENDAR_STYLE_URL), '', null);
+    }
+  }
+
+  wp_enqueue_script('stagehand-event-calendar_scripts');
+
+  $inlineScript = "  stagehandVenueEventsCalendar('${divId}', ${optionsStr});";
+  if (function_exists('wp_add_inline_script')) {
+    wp_add_inline_script('stagehand-event-calendar_scripts', $inlineScript);
+  } else {
+    enqueue_inline_script('stagehand-event-calendar_scripts_inline',
+      $inlineScript,
+      array('stagehand-event-calendar_scripts'),
+      true);
+  }
+
+  $return_string = "<div id='${divId}'></div>";
+  return $return_string;
+}
+
 function register_shortcodes() {
   add_shortcode(SHORTCODE_NAME, 'lumin_events_shortcode');
+  add_shortcode(CALENDAR_SHORTCODE_NAME, 'stagehand_event_calendar_shortcode');
 }
 
 add_action('init', 'register_shortcodes');
@@ -191,21 +291,10 @@ function register_scripts() {
     esc_url_raw(LUMINEVENTS_URL),
     '',
     null);
-
-  if (is_page()) {
-    global $post;
-
-    /*
-     * Look for the shortcode on the page. If we have one,
-     * we enqueue our widget stylesheet.
-     */
-    if (has_shortcode($post->post_content, SHORTCODE_NAME)) {
-      wp_enqueue_style('luminlife-events_style',
-        esc_url_raw(LUMINEVENTS_STYLE_URL),
-        '',
-        null);
-    }
-  }
+  wp_register_script('stagehand-event-calendar_scripts',
+    esc_url_raw(STAGEHANDCALENDAR_URL),
+    '',
+    null);
 }
 
 add_action('wp_enqueue_scripts', 'register_scripts');
