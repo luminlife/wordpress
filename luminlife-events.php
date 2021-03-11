@@ -130,6 +130,7 @@ function lumin_events_shortcode($attributes) {
     'disable_description' => NULL,
     'target' => NULL,
     'link_to' => NULL,
+    'origin_url' => NULL,
   ), $attributes));
 
   $divId = 'luminlife-events';
@@ -214,6 +215,7 @@ function stagehand_event_calendar_shortcode($attributes) {
     'show_photo' => NULL,
     'background_color' => NULL,
     'target' => NULL,
+    'origin_url' => NULL,
   ), $attributes));
 
   $divId = 'stagehand-calendar';
@@ -242,6 +244,9 @@ function stagehand_event_calendar_shortcode($attributes) {
   }
   if (isset($background_color)) {
     $optionsStr .= "backgroundColor: '${background_color}',";
+  }
+  if (isset($origin_url)) {
+    $optionsStr .= "originUrl: '${origin_url}',";
   }
 
   $optionsStr .= "}";
